@@ -9,12 +9,39 @@
       background: linear-gradient(to right, purple, red);
       font-family: Arial, sans-serif;
       margin: 0;
-      height: 100vh;
-      display: flex;
+    }
+
+    .pantalla {
+      display: none;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      position: relative;
-      overflow: hidden;
+      height: 100vh;
+    }
+
+    .activa {
+      display: flex;
+    }
+
+    h1 {
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 20px;
+      background-color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.3s;
+      margin: 10px;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background-color: #eee;
     }
 
     .menu-container {
@@ -42,7 +69,7 @@
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       padding: 10px;
-      width: 200px;
+      width: 220px;
     }
 
     .menu-options a {
@@ -51,6 +78,7 @@
       color: black;
       text-decoration: none;
       border-bottom: 1px solid #ccc;
+      cursor: pointer;
     }
 
     .menu-options a:last-child {
@@ -61,112 +89,158 @@
       background-color: #f2f2f2;
     }
 
-    .inicio {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    h1 {
-      color: white;
-      margin-bottom: 40px;
-    }
-
-    .btn-jugar {
+    .triangulo {
       width: 0;
       height: 0;
       border-left: 30px solid transparent;
       border-right: 30px solid transparent;
-      border-top: 60px solid white;
-      cursor: pointer;
-      animation: pulse 1s infinite;
+      border-top: 50px solid white;
+      margin-bottom: 10px;
     }
 
-    .btn-text {
+    .pregunta-item {
       color: white;
-      margin-top: 10px;
-      font-size: 20px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid white;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 5px;
     }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-
-    .pantalla-niveles, .pantalla-juego {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-    }
-
   </style>
 </head>
 <body>
   <div class="menu-container">
     <button class="menu-button" onclick="toggleMenu()">☰ Menú</button>
     <div class="menu-options" id="menu">
-      <a href="#">Ver preguntas y retos</a>
-      <a href="#">Agregar preguntas y retos</a>
-      <a href="#">Configuración (futura)</a>
+      <a onclick="irAPantalla('pantalla-inicio')">Inicio</a>
+      <a onclick="irAPantalla('pantalla-ver')">Ver preguntas y retos</a>
+      <a onclick="irAPantalla('pantalla-agregar')">Agregar preguntas y retos</a>
+      <a onclick="alert('Próximamente...')">Configuración (futura)</a>
     </div>
   </div>
 
-  <!-- Pantalla 1 -->
-  <div class="inicio" id="pantallaInicio">
+  <!-- Pantalla 1: Inicio -->
+  <div class="pantalla activa" id="pantalla-inicio">
     <h1>¿Verdad o Reto?</h1>
-    <div class="btn-jugar" onclick="irANiveles()"></div>
-    <div class="btn-text">Jugar</div>
+    <div class="triangulo"></div>
+    <button onclick="irAPantalla('pantalla-niveles')">Jugar</button>
   </div>
 
-  <!-- Pantalla 2: Selección de niveles y jugadores -->
-  <div class="pantalla-niveles" id="pantallaNiveles">
-    <h1>Selecciona el nivel</h1>
-    <button onclick="empezarJuego('pacifico')">Pacífico</button>
-    <button onclick="empezarJuego('caliente')">Caliente</button>
-    <button onclick="empezarJuego('extremo')">Extremo</button>
-    <p>En el futuro aquí también pondremos agregar jugadores y personalizar preguntas.</p>
+  <!-- Pantalla 2: Selección de nivel -->
+  <div class="pantalla" id="pantalla-niveles">
+    <h1>Selecciona un nivel</h1>
+    <button onclick="seleccionarNivel('pacifico')">Pacífico</button>
+    <button onclick="seleccionarNivel('caliente')">Caliente</button>
+    <button onclick="seleccionarNivel('extremo')">Extremo</button>
+    <button onclick="irAPantalla('pantalla-inicio')">Volver</button>
   </div>
 
-  <!-- Pantalla 3: Juego principal (estructura vacía aún) -->
-  <div class="pantalla-juego" id="pantallaJuego">
-    <h1 id="nivelTitulo"></h1>
-    <div id="output"></div>
-    <button onclick="mostrarVerdad()">Verdad</button>
-    <button onclick="mostrarReto()">Reto</button>
-    <button onclick="mostrarAleatorio()">Aleatorio</button>
+  <!-- Pantalla 3: Juego -->
+  <div class="pantalla" id="pantalla-juego">
+    <h1>¡Turno de jugar!</h1>
+    <button onclick="mostrarPregunta('verdad')">Verdad</button>
+    <button onclick="mostrarPregunta('reto')">Reto</button>
+    <button onclick="mostrarPregunta('aleatorio')">Aleatorio</button>
+    <p id="pregunta" style="color:white; font-size: 24px; margin: 20px;"></p>
+    <button onclick="irAPantalla('pantalla-niveles')">Volver</button>
+  </div>
+
+  <!-- Pantalla 4: Ver preguntas -->
+  <div class="pantalla" id="pantalla-ver">
+    <h1>Preguntas y Retos</h1>
+    <div id="listaPreguntas"></div>
+    <button onclick="irAPantalla('pantalla-inicio')">Volver</button>
+  </div>
+
+  <!-- Pantalla 5: Agregar preguntas -->
+  <div class="pantalla" id="pantalla-agregar">
+    <h1>Agregar nueva pregunta/reto</h1>
+    <input id="nueva" placeholder="Escribe tu verdad o reto" style="padding: 10px; width: 80%;">
+    <select id="tipo">
+      <option value="verdad">Verdad</option>
+      <option value="reto">Reto</option>
+    </select>
+    <select id="nivel">
+      <option value="pacifico">Pacífico</option>
+      <option value="caliente">Caliente</option>
+      <option value="extremo">Extremo</option>
+    </select>
+    <button onclick="agregarPregunta()">Agregar</button>
+    <button onclick="irAPantalla('pantalla-inicio')">Volver</button>
   </div>
 
   <script>
+    const preguntasPorNivel = JSON.parse(localStorage.getItem("preguntasPorNivel")) || {
+      pacifico: {
+        verdad: ["¿Cuántas veces te escapaste del colegio?"],
+        reto: ["Ve y grita a la calle que estás muy feliz."]
+      },
+      caliente: {
+        verdad: ["¿A quién le has robado un beso?"],
+        reto: ["Bailar el pico de la botella por 30 segundos."]
+      },
+      extremo: {
+        verdad: ["¿Cuál es la postura que más te gusta y por qué?"],
+        reto: ["Sexo oral mirando a los ojos de la otra persona"]
+      }
+    };
+
+    let nivelActual = "";
+
     function toggleMenu() {
       const menu = document.getElementById('menu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 
-    function irANiveles() {
-      document.getElementById('pantallaInicio').style.display = 'none';
-      document.getElementById('pantallaNiveles').style.display = 'flex';
+    function irAPantalla(id) {
+      const pantallas = document.querySelectorAll('.pantalla');
+      pantallas.forEach(p => p.classList.remove('activa'));
+      document.getElementById(id).classList.add('activa');
+      if (id === 'pantalla-ver') mostrarLista();
     }
 
-    function empezarJuego(nivel) {
-      document.getElementById('pantallaNiveles').style.display = 'none';
-      document.getElementById('pantallaJuego').style.display = 'flex';
-      document.getElementById('nivelTitulo').textContent = 'Nivel: ' + nivel;
+    function seleccionarNivel(nivel) {
+      nivelActual = nivel;
+      irAPantalla('pantalla-juego');
     }
 
-    function mostrarVerdad() {
-      document.getElementById("output").textContent = "[Aquí irá una verdad aleatoria]";
+    function mostrarPregunta(tipo) {
+      const preguntas = preguntasPorNivel[nivelActual];
+      let lista;
+      if (tipo === 'aleatorio') {
+        const todas = [...preguntas.verdad, ...preguntas.reto];
+        lista = todas;
+      } else {
+        lista = preguntas[tipo];
+      }
+      const pregunta = lista[Math.floor(Math.random() * lista.length)];
+      document.getElementById("pregunta").textContent = pregunta;
     }
 
-    function mostrarReto() {
-      document.getElementById("output").textContent = "[Aquí irá un reto aleatorio]";
+    function mostrarLista() {
+      const contenedor = document.getElementById("listaPreguntas");
+      contenedor.innerHTML = "";
+      for (let nivel in preguntasPorNivel) {
+        for (let tipo in preguntasPorNivel[nivel]) {
+          preguntasPorNivel[nivel][tipo].forEach(p => {
+            const div = document.createElement("div");
+            div.className = "pregunta-item";
+            div.textContent = `[${nivel} - ${tipo}] ${p}`;
+            contenedor.appendChild(div);
+          });
+        }
+      }
     }
 
-    function mostrarAleatorio() {
-      const opcion = Math.random() < 0.5 ? 'Verdad' : 'Reto';
-      document.getElementById("output").textContent = `[Aleatorio → ${opcion}]`;
+    function agregarPregunta() {
+      const texto = document.getElementById("nueva").value;
+      const tipo = document.getElementById("tipo").value;
+      const nivel = document.getElementById("nivel").value;
+      if (texto.trim() === "") return;
+      preguntasPorNivel[nivel][tipo].push(texto);
+      localStorage.setItem("preguntasPorNivel", JSON.stringify(preguntasPorNivel));
+      document.getElementById("nueva").value = "";
+      alert("Pregunta agregada");
     }
   </script>
 </body>

@@ -8,41 +8,13 @@
     body {
       background: linear-gradient(to right, purple, red);
       font-family: Arial, sans-serif;
+      margin: 0;
+      height: 100vh;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    h1 {
-      color: white;
-      margin-bottom: 30px;
-    }
-
-    button {
-      padding: 15px 30px;
-      font-size: 20px;
-      background-color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.2s, background-color 0.3s;
-      margin: 10px;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      background-color: #eee;
-    }
-
-    #output {
-      color: white;
-      font-size: 24px;
-      margin: 20px;
-      text-align: center;
-      max-width: 80%;
+      position: relative;
+      overflow: hidden;
     }
 
     .menu-container {
@@ -88,10 +60,51 @@
     .menu-options a:hover {
       background-color: #f2f2f2;
     }
+
+    .inicio {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: white;
+      margin-bottom: 40px;
+    }
+
+    .btn-jugar {
+      width: 0;
+      height: 0;
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-top: 60px solid white;
+      cursor: pointer;
+      animation: pulse 1s infinite;
+    }
+
+    .btn-text {
+      color: white;
+      margin-top: 10px;
+      font-size: 20px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .pantalla-niveles, .pantalla-juego {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
   </style>
 </head>
 <body>
-
   <div class="menu-container">
     <button class="menu-button" onclick="toggleMenu()">☰ Menú</button>
     <div class="menu-options" id="menu">
@@ -101,39 +114,59 @@
     </div>
   </div>
 
-  <h1>¿Verdad o Reto?</h1>
+  <!-- Pantalla 1 -->
+  <div class="inicio" id="pantallaInicio">
+    <h1>¿Verdad o Reto?</h1>
+    <div class="btn-jugar" onclick="irANiveles()"></div>
+    <div class="btn-text">Jugar</div>
+  </div>
 
-  <div id="output"></div>
+  <!-- Pantalla 2: Selección de niveles y jugadores -->
+  <div class="pantalla-niveles" id="pantallaNiveles">
+    <h1>Selecciona el nivel</h1>
+    <button onclick="empezarJuego('pacifico')">Pacífico</button>
+    <button onclick="empezarJuego('caliente')">Caliente</button>
+    <button onclick="empezarJuego('extremo')">Extremo</button>
+    <p>En el futuro aquí también pondremos agregar jugadores y personalizar preguntas.</p>
+  </div>
 
-  <button onclick="mostrarVerdad()">Verdad</button>
-  <button onclick="mostrarReto()">Reto</button>
+  <!-- Pantalla 3: Juego principal (estructura vacía aún) -->
+  <div class="pantalla-juego" id="pantallaJuego">
+    <h1 id="nivelTitulo"></h1>
+    <div id="output"></div>
+    <button onclick="mostrarVerdad()">Verdad</button>
+    <button onclick="mostrarReto()">Reto</button>
+    <button onclick="mostrarAleatorio()">Aleatorio</button>
+  </div>
 
   <script>
-    const verdades = [
-      "¿Cuál ha sido la vez que más has tenido celos?",
-      "¿Has mentido alguna vez para evitar una cita?",
-      "¿Cuál es tu secreto más vergonzoso?"
-    ];
-
-    const retos = [
-      "Sexo oral por 30 segundos",
-      "Besa al jugador que tengas más cerca",
-      "Baila sin música durante 1 minuto"
-    ];
-
-    function mostrarVerdad() {
-      const alAzar = verdades[Math.floor(Math.random() * verdades.length)];
-      document.getElementById("output").textContent = alAzar;
-    }
-
-    function mostrarReto() {
-      const alAzar = retos[Math.floor(Math.random() * retos.length)];
-      document.getElementById("output").textContent = alAzar;
-    }
-
     function toggleMenu() {
       const menu = document.getElementById('menu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function irANiveles() {
+      document.getElementById('pantallaInicio').style.display = 'none';
+      document.getElementById('pantallaNiveles').style.display = 'flex';
+    }
+
+    function empezarJuego(nivel) {
+      document.getElementById('pantallaNiveles').style.display = 'none';
+      document.getElementById('pantallaJuego').style.display = 'flex';
+      document.getElementById('nivelTitulo').textContent = 'Nivel: ' + nivel;
+    }
+
+    function mostrarVerdad() {
+      document.getElementById("output").textContent = "[Aquí irá una verdad aleatoria]";
+    }
+
+    function mostrarReto() {
+      document.getElementById("output").textContent = "[Aquí irá un reto aleatorio]";
+    }
+
+    function mostrarAleatorio() {
+      const opcion = Math.random() < 0.5 ? 'Verdad' : 'Reto';
+      document.getElementById("output").textContent = `[Aleatorio → ${opcion}]`;
     }
   </script>
 </body>

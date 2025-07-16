@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Verdad o Reto</title>
   <style>
     body {
@@ -17,10 +17,16 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      animation: fadeIn 0.5s ease-in-out;
     }
 
     .activa {
       display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     h1 {
@@ -89,15 +95,6 @@
       background-color: #f2f2f2;
     }
 
-    .triangulo {
-      width: 0;
-      height: 0;
-      border-left: 30px solid transparent;
-      border-right: 30px solid transparent;
-      border-top: 50px solid white;
-      margin-bottom: 10px;
-    }
-
     .pregunta-item {
       color: white;
       background-color: rgba(255, 255, 255, 0.1);
@@ -105,6 +102,12 @@
       border-radius: 8px;
       padding: 10px;
       margin: 5px;
+    }
+
+    #contador {
+      font-size: 16px;
+      color: #fff;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -130,7 +133,7 @@
     <h1>Selecciona un nivel</h1>
     <button onclick="seleccionarNivel('pacifico')">Pacífico</button>
     <button onclick="seleccionarNivel('caliente')">Caliente</button>
-    <button onclick="seleccionarNivel('extremo')">Extremo</button>
+    <button onclick="seleccionarNivel('Extremo')">Extremo_calienteExtremo</button>
     <button onclick="irAPantalla('pantalla-inicio')">Volver</button>
   </div>
 
@@ -141,6 +144,7 @@
     <button onclick="mostrarPregunta('reto')">Reto</button>
     <button onclick="mostrarPregunta('aleatorio')">Aleatorio</button>
     <p id="pregunta" style="color:white; font-size: 24px; margin: 20px;"></p>
+    <div id="contador">Turno: 0</div>
     <button onclick="irAPantalla('pantalla-niveles')">Volver</button>
   </div>
 
@@ -162,7 +166,7 @@
     <select id="nivel">
       <option value="pacifico">Pacífico</option>
       <option value="caliente">Caliente</option>
-      <option value="extremo">Extremo</option>
+      <option value="Extremo">Extremo_calienteExtremo</option>
     </select>
     <button onclick="agregarPregunta()">Agregar</button>
     <button onclick="irAPantalla('pantalla-inicio')">Volver</button>
@@ -171,20 +175,187 @@
   <script>
     const preguntasPorNivel = JSON.parse(localStorage.getItem("preguntasPorNivel")) || {
       pacifico: {
-        verdad: ["¿Cuántas veces te escapaste del colegio?"],
-        reto: ["Ve y grita a la calle que estás muy feliz."]
+        verdad: ["¿Te has copiado en un examen?"],
+        verdad: ["¿Has mentido para no ir al colegio?"],
+        verdad: ["¿Cuál es tu comida favorita?"],
+        verdad: ["¿Te has enamorado de alguien que no te correspondía?"],
+        verdad: ["¿Has llorado por una película?"],
+        verdad: ["¿Qué animal te gustaría tener como mascota?"],
+        verdad: ["¿Te has caído en público?"],
+        verdad: ["¿Alguna vez fingiste estar enfermo?"],
+        verdad: ["¿Has perdido algo importante?"],
+        verdad: ["¿Te has peleado con un amigo por algo tonto?"],
+        verdad: ["¿Cuál es tu mayor miedo?"],
+        verdad: ["¿Qué es lo más loco que has hecho por un amigo?"],
+        verdad: ["¿Tienes algún talento oculto?"],
+        verdad: ["¿Has dicho un secreto que no debías?"],
+        verdad: ["¿Qué harías si fueras invisible por un día?"],
+        verdad: ["¿Cuál fue tu peor nota en el colegio?"],
+        verdad: ["¿Has tenido una pesadilla muy real?"],
+        verdad: ["¿Qué harías con un millón de pesos?"],
+        verdad: ["¿Tienes alguna manía rara?"],
+        verdad: ["¿Alguna vez te escondiste de alguien?"],
+        verdad: ["¿Cuál es tu recuerdo más feliz?"],
+        verdad: ["¿Qué personaje famoso te gustaría conocer?"],
+        verdad: ["¿Cuál es tu serie o película favorita?"],
+        verdad: ["¿Has roto algo y no lo confesaste?"],
+        verdad: ["¿Te has reído en momentos inapropiados?"],
+
+        reto: ["Ve y grita a la calle que estás muy feliz."],
+        reto: ["Haz 10 saltos en el lugar como rana."],
+        reto: ["Imita a tu personaje de caricatura favorito."],
+        reto: ["Cuenta un chiste malo."],
+        reto: ["Dibuja algo con los ojos cerrados."],
+        reto: ["Canta el coro de tu canción favorita."],
+        reto: ["Di el abecedario al revés (intenta)."],
+        reto: ["Habla como robot por 1 minuto."],
+        reto: ["Di 3 trabalenguas sin equivocarte."],
+        reto: ["Haz una pose graciosa y mantenla por 10 segundos."],
+        reto: ["Camina como un modelo en pasarela."],
+        reto: ["Manda un emoji aleatorio a alguien."],
+        reto: ["Haz una mueca fea y tómate una selfie."],
+        reto: ["Dibuja un gato usando tu pie."],
+        reto: ["Escribe con la mano contraria una palabra larga."],
+        reto: ["Baila como si nadie te viera por 15 segundos."],
+        reto: ["Habla sin vocales por 30 segundos."],
+        reto: ["Cuenta una historia inventada en 10 segundos."],
+        reto: ["Actúa como si ganaras un premio."],
+        reto: ["Mira fijamente a alguien sin reír por 20 segundos."],
+        reto: ["Haz una mini coreografía improvisada."],
+        reto: ["Describe tu día como si fuera una telenovela."],
+        reto: ["Llama a alguien y dile que lo quieres mucho."],
+        reto: ["Graba un audio diciendo “¡Estoy feliz!” con emoción."],
+        reto: ["Di algo que suene inteligente usando palabras inventadas."],
+        reto: ["Haz sonidos de animales por 20 segundos."]
+
       },
       caliente: {
-        verdad: ["¿A quién le has robado un beso?"],
-        reto: ["Bailar el pico de la botella por 30 segundos."]
+        verdad: ["¿A quién le has dado tu primer beso?"],
+        verdad: ["¿Has tenido un amor prohibido?"],
+        verdad: ["¿Has enviado mensajes coquetos?"],
+        verdad: ["¿Te han gustado dos personas al mismo tiempo?"],
+        verdad: ["¿Has tenido una cita desastrosa?"],
+        verdad: ["¿Te has enamorado de alguien de un juego/red social?"],
+        verdad: ["¿Cuál es tu parte favorita de tu cuerpo?"],
+        verdad: ["¿Te han rechazado alguna vez?"],
+        verdad: ["¿Has pensado en besar a alguien de este grupo?"],
+        verdad: ["¿Cuál fue tu momento más romántico?"],
+        verdad: ["¿Has tenido un sueño subido de tono?"],
+        verdad: ["¿Te han cachado en algo íntimo?"],
+        verdad: ["¿Has estado con alguien por interés?"],
+        verdad: ["¿Te has sentido atraído por alguien prohibido?"],
+        verdad: ["¿Alguna vez fingiste amor?"],
+        verdad: ["¿Has escrito cartas de amor?"],
+        verdad: ["¿Cuál fue tu peor beso?"],
+        verdad: ["¿Has sentido celos de una ex pareja?"],
+        verdad: ["¿Te ha gustado un amigo/a de tu ex?"],
+        verdad: ["¿Has pensado en volver con alguien?"],
+        verdad: ["¿Has tenido una relación secreta?"],
+        verdad: ["¿Te han enviado fotos íntimas?"],
+        verdad: ["¿Has hecho sexting?"],
+        verdad: ["¿Has usado excusas para ver a alguien?"],
+        verdad: ["¿Qué fantasía romántica te gustaría cumplir?"],
+
+        reto: ["Bailar el pico de la botella por 30 segundos."],
+        reto: ["Simula besar tu mano con pasión."],
+        reto: ["Imita una escena romántica de película."],
+        reto: ["Dile un piropo al que esté a tu derecha."],
+        reto: ["Haz una mirada seductora por 10 segundos."],
+        reto: ["Baila una canción sensual."],
+        reto: ["Simula una llamada a tu crush."],
+        reto: ["Manda un emoji coquetón a un contacto aleatorio."],
+        reto: ["Canta una canción romántica a alguien."],
+        reto: ["Dibuja un corazón con tu cuerpo."],
+        reto: ["Describe tu beso ideal."],
+        reto: ["Haz un mini desfile con mirada sexy."],
+        reto: ["Di algo atrevido pero sin decir malas palabras."],
+        reto: ["Simula que le declaras tu amor a alguien."],
+        reto: ["Di la frase más seductora que se te ocurra."],
+        reto: ["Escribe en el aire el nombre de tu crush."],
+        reto: ["Di con quién jugarías solo a “verdad”."],
+        reto: ["Imita una escena de telenovela."],
+        reto: ["Simula un abrazo apasionado al aire."],
+        reto: ["Llama a alguien y dile “te soñé”."],
+        reto: ["Lee un texto como si fuera poesía erótica."],
+        reto: ["Manda un audio diciendo “¿me extrañas?” con tono sexy."],
+        reto: ["Tómate una foto haciendo “ojitos”."],
+        reto: ["Haz una historia romántica con dos emojis."],
+        reto: ["Rózate la nariz como si fuera un beso esquimal."],
+        reto: ["Di tu frase para ligar más efectiva."]
+
       },
-      extremo: {
+      Extremo: {
         verdad: ["¿Cuál es la postura que más te gusta y por qué?"],
-        reto: ["Sexo oral mirando a los ojos de la otra persona"]
+        verdad: ["¿Has tenido una experiencia íntima en un lugar público?"],
+        verdad: ["¿Te gusta dominar o que te dominen?"],
+        verdad: ["¿Qué parte del cuerpo te da más placer?"],
+        verdad: ["¿Has grabado algo íntimo?"],
+        verdad: ["¿Has hecho el amor con alguien con quien no debías?"],
+        verdad: ["¿Te han atado o has atado a alguien?"],
+        verdad: ["¿Has fantaseado con alguien prohibido?"],
+        verdad: ["¿Has usado juguetes sexuales?"],
+        verdad: ["¿Cuál es tu mayor fetiche?"],
+        verdad: ["¿Cuál ha sido tu lugar más raro para hacerlo?"],
+        verdad: ["¿Lo más caliente que has hecho en una videollamada?"],
+        verdad: ["¿Has hecho tríos (o te gustaría)?"],
+        verdad: ["¿Has tenido citas solo por sexo?"],
+        verdad: ["¿Te han pillado desnudo?"],
+        verdad: ["¿Lo más salvaje que has hecho en la cama?"],
+        verdad: ["¿Qué fantasía aún no cumples?"],
+        verdad: ["¿Has usado disfraces para juegos íntimos?"],
+        verdad: ["¿Has probado el “sexting” Extremo?"],
+        verdad: ["¿Qué cosa harías solo si nadie supiera?"],
+        verdad: ["¿Te han hecho un striptease?"],
+        verdad: ["¿Has dormido con alguien sin hacer nada?"],
+        verdad: ["¿Has hecho algo íntimo mientras alguien más estaba cerca?"],
+        verdad: ["¿Has probado hacerlo con música intensa?"],
+        verdad: ["¿Has usado comida en momentos íntimos?"],
+        verdad: ["¿Qué ropa interior prefieres usar para sorprender?"],
+
+        reto: ["Sexo oral mirando a los ojos de la otra persona"],
+        reto: ["Sexo oral mirando a los ojos de la otra persona"],
+        reto: ["Sexo oral mirando a los ojos de la otra persona"],
+        reto: ["Sexo oral mirando a los ojos de la otra persona"],
+        reto: ["Sexo oral mirando a los ojos de la otra persona"],
+        reto: ["Simula un gemido (sin exagerar)."],
+        reto: ["Describe tu fantasía con solo 5 palabras."],
+        reto: ["Haz un striptease con ropa puesta (juguetón)."],
+        reto: ["Imita una escena de pasión en voz baja."],
+        reto: ["dile algo muy atrevido a quien quieras."],
+        reto: ["Haz una pose provocadora."],
+        reto: ["Simula besar el cuello al aire."],
+        reto: ["Di lo que harías si estuvieran solos."],
+        reto: ["Baila lento como en una noche íntima(que tu pareja decida que tan desnud@ estés)."],
+        reto: ["Imita un jadeo(gemir) sin reírte."],
+        reto: ["Haz una confesión caliente con tono inocente."],
+        reto: ["Lee una frase sexy que la eliga alquien más."],
+        reto: ["has un masaje erotico."],
+        reto: ["Dibuja en el aire tu parte favorita del cuerpo."],
+        reto: ["quita una prenda lentamente."],
+        reto: ["quita una prenda lentamente."],
+        reto: ["quita una prenda lentamente."],
+        reto: ["quita una prenda lentamente."],
+        reto: ["quita una prenda lentamente."],
+        reto: ["quita una prenda lentamente."],
+        reto: ["Da un mini discurso como si fueras maestro del placer."],
+        reto: ["Haz sonidos sensuales sin decir palabras."],
+        reto: ["otra persona eliga penetración por 30 segundos o decir algo que salga del corazón"],
+        reto: ["Simula decir un secreto íntimo al oído."],
+        reto: ["Baila y seduce con tu baile"],
+        reto: ["Da una vuelta completa como si te modelaras."],
+        reto: ["Imagina una escena y descríbela en voz baja."],
+        reto: ["Di cuál sería tu apodo sexy."],
+        reto: ["has lo que tu pareja quiera por 1 minuto"],
+        reto: ["has lo que tu pareja quiera por 1 minuto"],
+        reto: ["has lo que tu pareja quiera por 1 minuto"],
+        reto: ["has lo que tu pareja quiera por 1 minuto"],
+        reto: ["has lo que tu pareja quiera por 1 minuto"],
+        reto: ["deja que te den una cachetada, nalgada o chupón tu eliges."]
       }
     };
 
     let nivelActual = "";
+    let contadorTurnos = 0;
 
     function toggleMenu() {
       const menu = document.getElementById('menu');
@@ -195,11 +366,18 @@
       const pantallas = document.querySelectorAll('.pantalla');
       pantallas.forEach(p => p.classList.remove('activa'));
       document.getElementById(id).classList.add('activa');
+
+      // Ocultar menú si estamos en juego
+      const menuContenedor = document.querySelector('.menu-container');
+      menuContenedor.style.display = (id === 'pantalla-juego') ? 'none' : 'block';
+
       if (id === 'pantalla-ver') mostrarLista();
     }
 
     function seleccionarNivel(nivel) {
       nivelActual = nivel;
+      contadorTurnos = 0;
+      document.getElementById("contador").textContent = "Turno: 0";
       irAPantalla('pantalla-juego');
     }
 
@@ -214,6 +392,10 @@
       }
       const pregunta = lista[Math.floor(Math.random() * lista.length)];
       document.getElementById("pregunta").textContent = pregunta;
+
+      // Actualizar contador de turnos
+      contadorTurnos++;
+      document.getElementById("contador").textContent = `Turno: ${contadorTurnos}`;
     }
 
     function mostrarLista() {

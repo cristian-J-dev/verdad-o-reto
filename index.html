@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verdad o Reto</title>
   <style>
     body {
@@ -17,16 +17,10 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      animation: fadeIn 0.5s ease-in-out;
     }
 
     .activa {
       display: flex;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.97); }
-      to { opacity: 1; transform: scale(1); }
     }
 
     h1 {
@@ -46,7 +40,7 @@
     }
 
     button:hover {
-      transform: scale(1.05);
+      transform: scale(1.1);
       background-color: #eee;
     }
 
@@ -103,12 +97,6 @@
       padding: 10px;
       margin: 5px;
     }
-
-    #contador {
-      font-size: 16px;
-      color: #fff;
-      margin-top: 10px;
-    }
   </style>
 </head>
 <body>
@@ -133,7 +121,7 @@
     <h1>Selecciona un nivel</h1>
     <button onclick="seleccionarNivel('pacifico')">Pacífico</button>
     <button onclick="seleccionarNivel('caliente')">Caliente</button>
-    <button onclick="seleccionarNivel('Extremo')">Extremo</button>
+    <button onclick="seleccionarNivel('extremo')">Extremo</button>
     <button onclick="irAPantalla('pantalla-inicio')">Volver</button>
   </div>
 
@@ -144,7 +132,6 @@
     <button onclick="mostrarPregunta('reto')">Reto</button>
     <button onclick="mostrarPregunta('aleatorio')">Aleatorio</button>
     <p id="pregunta" style="color:white; font-size: 24px; margin: 20px;"></p>
-    <div id="contador">Turno: 0</div>
     <button onclick="irAPantalla('pantalla-niveles')">Volver</button>
   </div>
 
@@ -166,14 +153,14 @@
     <select id="nivel">
       <option value="pacifico">Pacífico</option>
       <option value="caliente">Caliente</option>
-      <option value="Extremo">Ee</option>
+      <option value="extremo">Extremo</option>
     </select>
     <button onclick="agregarPregunta()">Agregar</button>
     <button onclick="irAPantalla('pantalla-inicio')">Volver</button>
   </div>
 
   <script>
-    const preguntasPorNivel = JSON.parse(localStorage.getItem("preguntasPorNivel")) || {
+    const preguntasPorNivel = {
       pacifico: {
         verdad: [
           "¿Te has copiado en un examen?",
@@ -358,11 +345,11 @@
           "deja que te den una cachetada, nalgada o chupón tu eliges."
         ]
       }
-
     };
 
+    localStorage.setItem("preguntasPorNivel", JSON.stringify(preguntasPorNivel));
+
     let nivelActual = "";
-    let contadorTurnos = 0;
 
     function toggleMenu() {
       const menu = document.getElementById('menu');
@@ -373,44 +360,35 @@
       const pantallas = document.querySelectorAll('.pantalla');
       pantallas.forEach(p => p.classList.remove('activa'));
       document.getElementById(id).classList.add('activa');
-
-      // Ocultar menú si estamos en juego
-      const menuContenedor = document.querySelector('.menu-container');
-      menuContenedor.style.display = (id === 'pantalla-juego') ? 'none' : 'block';
-
       if (id === 'pantalla-ver') mostrarLista();
     }
 
     function seleccionarNivel(nivel) {
       nivelActual = nivel;
-      contadorTurnos = 0;
-      document.getElementById("contador").textContent = "Turno: 0";
       irAPantalla('pantalla-juego');
     }
 
     function mostrarPregunta(tipo) {
-      const preguntas = preguntasPorNivel[nivelActual];
+      const preguntas = JSON.parse(localStorage.getItem("preguntasPorNivel"));
+      const datos = preguntas[nivelActual];
       let lista;
       if (tipo === 'aleatorio') {
-        const todas = [...preguntas.verdad, ...preguntas.reto];
+        const todas = [...datos.verdad, ...datos.reto];
         lista = todas;
       } else {
-        lista = preguntas[tipo];
+        lista = datos[tipo];
       }
       const pregunta = lista[Math.floor(Math.random() * lista.length)];
       document.getElementById("pregunta").textContent = pregunta;
-
-      // Actualizar contador de turnos
-      contadorTurnos++;
-      document.getElementById("contador").textContent = `Turno: ${contadorTurnos}`;
     }
 
     function mostrarLista() {
+      const preguntas = JSON.parse(localStorage.getItem("preguntasPorNivel"));
       const contenedor = document.getElementById("listaPreguntas");
       contenedor.innerHTML = "";
-      for (let nivel in preguntasPorNivel) {
-        for (let tipo in preguntasPorNivel[nivel]) {
-          preguntasPorNivel[nivel][tipo].forEach(p => {
+      for (let nivel in preguntas) {
+        for (let tipo in preguntas[nivel]) {
+          preguntas[nivel][tipo].forEach(p => {
             const div = document.createElement("div");
             div.className = "pregunta-item";
             div.textContent = `[${nivel} - ${tipo}] ${p}`;
@@ -425,8 +403,9 @@
       const tipo = document.getElementById("tipo").value;
       const nivel = document.getElementById("nivel").value;
       if (texto.trim() === "") return;
-      preguntasPorNivel[nivel][tipo].push(texto);
-      localStorage.setItem("preguntasPorNivel", JSON.stringify(preguntasPorNivel));
+      const preguntas = JSON.parse(localStorage.getItem("preguntasPorNivel"));
+      preguntas[nivel][tipo].push(texto);
+      localStorage.setItem("preguntasPorNivel", JSON.stringify(preguntas));
       document.getElementById("nueva").value = "";
       alert("Pregunta agregada");
     }
